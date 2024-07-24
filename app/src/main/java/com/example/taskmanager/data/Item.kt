@@ -8,7 +8,6 @@ data class Item(
     @PrimaryKey(autoGenerate = true)
     val id : Int = 0,
     var task : String,
-    var deadline : String,
     var reminderDate : String,
     var reminderTime : String
 )

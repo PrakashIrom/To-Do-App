@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -30,8 +29,7 @@ import kotlinx.coroutines.launch
 fun UpdateTask(viewModel: TaskViewModel, item: Item, onDismiss: () -> Unit){
 
     var task by remember{ mutableStateOf(item.task) }
-    var deadline by remember{ mutableStateOf(item.deadline) }
-    var reminderDate by remember{ mutableStateOf("")}
+    var reminderDate by remember{ mutableStateOf(item.reminderDate)}
     var reminderTime by remember{ mutableStateOf(item.reminderTime) }
     val coroutineScope = rememberCoroutineScope()
 
@@ -47,14 +45,6 @@ fun UpdateTask(viewModel: TaskViewModel, item: Item, onDismiss: () -> Unit){
                 TextField(value = task,
                     onValueChange = {task = it},
                     label = { Text("Edit Task")
-                    },
-                    modifier = Modifier.padding(10.dp),
-                    shape = RoundedCornerShape(8.dp)
-                )
-
-                TextField(value = deadline,
-                    onValueChange = {deadline = it},
-                    label = { Text("Edit Due Date")
                     },
                     modifier = Modifier.padding(10.dp),
                     shape = RoundedCornerShape(8.dp)
@@ -87,11 +77,10 @@ fun UpdateTask(viewModel: TaskViewModel, item: Item, onDismiss: () -> Unit){
                     ) {
                         Text("Cancel")
                     }
-                    Button(
+                    TextButton(
                         onClick = {
                             coroutineScope.launch {
                                 item.task = task
-                                item.deadline = deadline
                                 item.reminderDate = reminderDate
                                 item.reminderTime = reminderTime
                                 viewModel.updateItem(item)

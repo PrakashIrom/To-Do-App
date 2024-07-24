@@ -9,11 +9,12 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.example.taskmanager.TaskApplication
-import com.example.taskmanager.data.worker.ReminderWorker
+//import com.example.taskmanager.data.worker.ReminderWorker
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
+/*
 class ReminderViewModel(application: Application): ViewModel() {
 
     private val workManager =  WorkManager.getInstance(application)
@@ -48,4 +49,4 @@ class ReminderViewModel(application: Application): ViewModel() {
             }
         }
     }
-}
+}*/

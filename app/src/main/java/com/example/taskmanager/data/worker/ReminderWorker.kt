@@ -19,6 +19,7 @@ import kotlinx.coroutines.delay
 
 //The params parameter provides the configuration and parameters for the worker.
 // It contains information and utilities necessary for the worker to perform its task.
+/*
 class ReminderWorker(ctx: Context, params: WorkerParameters): CoroutineWorker(ctx, params){
     //When you enqueue a Worker using WorkManager, you don’t explicitly pass these parameters yourself.
     // Instead, WorkManager handles the instantiation and management of your Worker instance internally:
@@ -55,7 +56,6 @@ class ReminderWorker(ctx: Context, params: WorkerParameters): CoroutineWorker(ct
         val notification = NotificationCompat.Builder(applicationContext, "reminder_channel")
             .setContentTitle(title)
             .setContentText(message)
-            //.setSmallIcon(R.drawable.ic_notification)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
         notificationManager.notify(1, notification)
@@ -77,4 +77,4 @@ class ReminderWorker(ctx: Context, params: WorkerParameters): CoroutineWorker(ct
             notificationManager.createNotificationChannel(channel)
         }
     }
-}
+}*/

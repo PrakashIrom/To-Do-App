@@ -26,12 +26,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.taskmanager.data.Item
-import com.example.taskmanager.viewmodel.ReminderViewModel
+//import com.example.taskmanager.viewmodel.ReminderViewModel
 import com.example.taskmanager.viewmodel.TaskViewModel
 import kotlinx.coroutines.launch
 
@@ -49,13 +48,12 @@ fun Task(items: List<Item>, modifier: Modifier, viewModel: TaskViewModel){
     else{
         EmptyItems()
     }
-
 }
 
 @Composable
 fun TaskCard(item: Item, viewModel: TaskViewModel){
 
-    val reminderViewModel: ReminderViewModel = viewModel(factory = ReminderViewModel.Factory)
+   // val reminderViewModel: ReminderViewModel = viewModel(factory = ReminderViewModel.Factory)
     val coroutineScope = rememberCoroutineScope()
     var showDialog by remember { mutableStateOf(false) }
 
@@ -64,7 +62,6 @@ fun TaskCard(item: Item, viewModel: TaskViewModel){
         .padding(10.dp)){
 
         Box() {
-
             Column(modifier = Modifier
                 .padding(7.dp)
                 .fillMaxWidth()) {
@@ -74,13 +71,7 @@ fun TaskCard(item: Item, viewModel: TaskViewModel){
                     )
                     Text(text = item.task)
                 }
-                Row {
-                    Text(text = "Due Date : ",
-                        fontWeight = FontWeight.Bold
-                        )
-                    Text(text = item.deadline)
-                }
-                Row {
+                Row{
                     Text(text = "Reminder Date : ",
                         fontWeight = FontWeight.Bold
                         )
@@ -128,7 +119,6 @@ fun TaskCard(item: Item, viewModel: TaskViewModel){
                         }
                 )
             }
-
         }
     }
     if(showDialog){
@@ -143,5 +133,4 @@ fun EmptyItems(){
         horizontalAlignment = Alignment.CenterHorizontally){
         Text("No tasks is added!", style = MaterialTheme.typography.headlineSmall)
     }
-
 }

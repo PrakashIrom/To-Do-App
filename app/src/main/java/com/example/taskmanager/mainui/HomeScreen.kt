@@ -10,10 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
+import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +25,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -32,6 +35,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -43,7 +47,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.taskmanager.R
 import com.example.taskmanager.data.Item
 import com.example.taskmanager.ui.theme.TaskManagerTheme
-import com.example.taskmanager.viewmodel.ReminderViewModel
+//import com.example.taskmanager.viewmodel.ReminderViewModel
 import com.example.taskmanager.viewmodel.ScreenModeViewModel
 import com.example.taskmanager.viewmodel.TaskViewModel
 import kotlinx.coroutines.launch
@@ -51,7 +55,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(modifier: Modifier=Modifier.fillMaxSize()){
 
-    val reminderViewModel: ReminderViewModel = viewModel(factory = ReminderViewModel.Factory)
+    //val reminderViewModel: ReminderViewModel = viewModel(factory = ReminderViewModel.Factory)
     val viewModel: TaskViewModel = viewModel(factory = TaskViewModel.Factory)
     val screenViewModel: ScreenModeViewModel = viewModel(factory = ScreenModeViewModel.Factory)
     val itemState = viewModel.items.collectAsState()
@@ -76,7 +80,7 @@ fun HomeScreen(modifier: Modifier=Modifier.fillMaxSize()){
         }
 
         if(showDialog){
-            AddTaskDialog(onDismiss = {showDialog=false},viewModel,modifier,reminderViewModel)
+            AddTaskDialog(onDismiss = {showDialog=false},viewModel,modifier)
         }
     }
 }
@@ -116,14 +120,16 @@ fun TopBar(viewModel: ScreenModeViewModel, toggleState: Boolean){
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel, modifier: Modifier = Modifier, reminderViewModel: ReminderViewModel){
+fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel, modifier: Modifier = Modifier){
 
     var task by remember{ mutableStateOf("")}
-    var deadline by remember{ mutableStateOf("")}
-    var reminderDate by remember{ mutableStateOf("")}
-    var reminderTime by remember {mutableStateOf("")}
+    var reminderDate = remember{ mutableStateOf("")}
+    var reminderTime = remember {mutableStateOf("")}
     val coroutineScope = rememberCoroutineScope()
+    var showTime = remember{ mutableStateOf(false)}
+    var showDate = remember{ mutableStateOf(false)}
 
     Dialog(onDismissRequest = onDismiss,
         properties = DialogProperties(dismissOnClickOutside = false)
@@ -133,41 +139,48 @@ fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel, modifier: Modif
             tonalElevation = 8.dp
         ) {
             Column() {
-
                 TextField(value = task,
                     onValueChange = {task = it},
                     label = { Text("Add Task")
                     },
                     modifier = Modifier.padding(10.dp),
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
+                    colors = TextFieldDefaults.textFieldColors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    )
                 )
-
-                TextField(value = deadline,
-                    onValueChange = {deadline = it},
-                    label = { Text("Add Due Date")
-                    },
-                    modifier = Modifier.padding(10.dp),
-                    shape = RoundedCornerShape(8.dp)
-                )
-
-                TextField(value = reminderDate,
-                    onValueChange = {reminderDate = it},
+                ElevatedButton(onClick = {
+                    showDate.value = true
+                },
+                modifier = Modifier.padding(10.dp).wrapContentSize()
+                ) {
+                    Text("Set Date")
+                }
+                ElevatedButton(onClick = {
+                    showTime.value = true
+                },
+                    modifier = Modifier.padding(10.dp).wrapContentSize()
+                ) {
+                    Text("Set Time")
+                }
+                /*
+                TextField(value = reminderDate.value,
+                    onValueChange = {reminderDate.value = it},
                     label = { Text("Set Reminder Date")
                         Modifier.padding(8.dp)
                     },
                     modifier = Modifier.padding(10.dp),
                     shape = RoundedCornerShape(8.dp)
                 )
-
-                TextField(value = reminderTime,
-                    onValueChange = {reminderTime = it},
+                TextField(value = reminderTime.value,
+                    onValueChange = {reminderTime.value = it},
                     label = { Text("Set Reminder Time")
                         Modifier.padding(8.dp)
                     },
                     modifier = Modifier.padding(10.dp),
                     shape = RoundedCornerShape(8.dp)
-                )
-
+                )*/
                 Box(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -179,24 +192,30 @@ fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel, modifier: Modif
                     ) {
                         Text("Cancel")
                     }
-                    Button(
+                    TextButton(
                         onClick = {
-                            val item = Item(0, task, deadline, reminderDate, reminderTime)
+                            val item = Item(0, task, reminderDate.value, reminderTime.value)
                             coroutineScope.launch {
                                 viewModel.insertItem(item)
                             }
-                            reminderViewModel.updateReminder(reminderDate, reminderTime)
+                            //reminderViewModel.updateReminder(reminderDate.value, reminderTime.value)
                             onDismiss()
                         },
                         modifier = Modifier
                             .align(Alignment.CenterEnd)
                             .padding(end = 10.dp)
-                    ) {
+                    )
+                    {
                         Text("Add")
                     }
                 }
             }
         }
     }
+    if(showDate.value){
+        SetDate(reminderDate=reminderDate, showDate=showDate)}
+
+    if(showTime.value)
+        SetTime(reminderTime=reminderTime, showTime=showTime)
 }
 
