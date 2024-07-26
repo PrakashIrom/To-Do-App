@@ -64,7 +64,7 @@ fun SetDateTime(reminderDate: MutableState<String>, showDate:MutableState<Boolea
         }
 
     if(showTime.value)
-    TimePickerDialog(onDismiss = { showTime.value=false }, onConfirm = {showTime.value = false}, reminderTime, timePickerState) {
+        TimePickerDialog(onDismiss = { showTime.value=false }, onConfirm = {showTime.value = false}, reminderTime, timePickerState) {
         TimePicker(state = timePickerState)
     }
     timeInMillis.value = convertDateAndTimeToMilliseconds(dateState, timePickerState)

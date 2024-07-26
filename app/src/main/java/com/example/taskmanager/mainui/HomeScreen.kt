@@ -1,5 +1,6 @@
 package com.example.taskmanager.mainui
 
+import alarmmanager.scheduleTaskReminder
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
@@ -40,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -61,7 +63,6 @@ import java.util.Date
 @Composable
 fun HomeScreen(modifier: Modifier=Modifier.fillMaxSize()){
 
-    //val reminderViewModel: ReminderViewModel = viewModel(factory = ReminderViewModel.Factory)
     val viewModel: TaskViewModel = viewModel(factory = TaskViewModel.Factory)
     val screenViewModel: ScreenModeViewModel = viewModel(factory = ScreenModeViewModel.Factory)
     val itemState = viewModel.items.collectAsState()
@@ -93,8 +94,6 @@ fun HomeScreen(modifier: Modifier=Modifier.fillMaxSize()){
 
 @Composable
 fun TopBar(viewModel: ScreenModeViewModel, toggleState: Boolean){
-
-    //val toggleState = viewModel.isDarkTheme.collectAsState().value
 
     Box(
         modifier = Modifier
@@ -131,13 +130,15 @@ fun TopBar(viewModel: ScreenModeViewModel, toggleState: Boolean){
 @Composable
 fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel, modifier: Modifier = Modifier){
 
+    val context = LocalContext.current
     var task by remember{ mutableStateOf("")}
-    var reminderDate = remember{ mutableStateOf("")}
-    var reminderTime = remember {mutableStateOf("")}
+    val reminderDate = remember{ mutableStateOf("Add Date")}
+    val reminderTime = remember {mutableStateOf("Add Time")}
     val coroutineScope = rememberCoroutineScope()
-    var showTime = remember{ mutableStateOf(false)}
-    var showDate = remember{ mutableStateOf(false)}
-    var timeInMillis = remember{ mutableLongStateOf(Date().time) }
+    val showTime = remember{ mutableStateOf(false)}
+    val showDate = remember{ mutableStateOf(false)}
+    val timeInMillis = remember{ mutableLongStateOf(Date().time) }
+    var setTimer by remember{mutableLongStateOf(0L)}
 
     Dialog(onDismissRequest = onDismiss,
         properties = DialogProperties(dismissOnClickOutside = false),
@@ -156,32 +157,32 @@ fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel, modifier: Modif
                     colors = TextFieldDefaults.textFieldColors(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        containerColor = Color.Cyan
+                        containerColor = Color.White
                     )
                 )
                 ElevatedButton(onClick = {
                     showDate.value = true
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.DarkGray,
-                    contentColor = Color.Cyan
+                    containerColor = Color.White,
+                    contentColor = Color.Black
                 ),
                 modifier = Modifier.padding(10.dp).wrapContentSize()
                 ) {
-                    Text("Set Date")
+                    Text(reminderDate.value)
                 }
                 ElevatedButton(onClick = {
                     showTime.value = true
                 },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.DarkGray,
-                        contentColor = Color.Cyan
+                        containerColor = Color.White,
+                        contentColor = Color.Black
                     ),
                     modifier = Modifier
                         .padding(10.dp)
                         .wrapContentSize()
                 ) {
-                    Text("Set Time")
+                    Text(reminderTime.value)
                 }
                 Box(
                     modifier = Modifier.fillMaxWidth()
@@ -199,9 +200,9 @@ fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel, modifier: Modif
                             val item = Item(0, task, reminderDate.value, reminderTime.value, timeInMillis.value)
                             coroutineScope.launch {
                                 val id = viewModel.insertItem(item)
+                               setTimer = viewModel.getReminder(id)
+                                scheduleTaskReminder(context, id.toInt(), setTimer)
                             }
-                            // viewmodel for alarm manager
-                            //reminderViewModel.updateReminder(reminderDate.value, reminderTime.value)
                             onDismiss()
                         },
                         modifier = Modifier

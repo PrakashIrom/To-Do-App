@@ -42,6 +42,10 @@ class TaskViewModel(private val repository: ItemsRepository): ViewModel() {
         repository.updateItem(item)
     }
 
+    fun getReminder(id:Long):Long{
+       return repository.getReminderTime(id)
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
