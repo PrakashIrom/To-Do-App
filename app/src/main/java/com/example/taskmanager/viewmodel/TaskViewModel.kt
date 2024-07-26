@@ -21,6 +21,7 @@ class TaskViewModel(private val repository: ItemsRepository): ViewModel() {
     private val _items = MutableStateFlow<List<Item>>(emptyList())
     val items: StateFlow<List<Item>> = _items
 
+
     init{
         viewModelScope.launch{
             repository.getAllItem().collect{ items ->
@@ -29,8 +30,8 @@ class TaskViewModel(private val repository: ItemsRepository): ViewModel() {
         }
     }
 
-    suspend fun insertItem(item: Item){
-        repository.insertItem(item)
+    suspend fun insertItem(item: Item):Long{
+         return repository.insertItem(item)
     }
 
     suspend fun deleteItem(item: Item){

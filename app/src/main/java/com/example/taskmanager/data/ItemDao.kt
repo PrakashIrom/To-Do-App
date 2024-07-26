@@ -14,13 +14,16 @@ interface ItemDao {
     //if you try to insert an item with a duplicate primary key, the insert operation will be ignored,
     // and no exception will be thrown.
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(item: Item)
+    suspend fun insert(item: Item): Long
 
     @Delete
     suspend fun delete(item: Item)
 
     @Update
     suspend fun update(item: Item)
+
+    @Query("SELECT reminderTime FROM Tasks WHERE id = :taskId")
+     fun getReminderTime(taskId: Long): Long
 
     @Query("SELECT * FROM Tasks")
     fun getItems(): Flow<List<Item>>

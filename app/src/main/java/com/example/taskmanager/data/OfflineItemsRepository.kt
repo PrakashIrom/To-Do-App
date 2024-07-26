@@ -11,5 +11,6 @@ class OfflineItemsRepository(private val itemsDao: ItemDao) : ItemsRepository {
     override suspend fun updateItem(item: Item) = itemsDao.update(item)
 
     override suspend fun deleteItem(item: Item) = itemsDao.delete(item)
+    override fun getReminderTime(id:Long): Long = itemsDao.getReminderTime(id)
 
 }

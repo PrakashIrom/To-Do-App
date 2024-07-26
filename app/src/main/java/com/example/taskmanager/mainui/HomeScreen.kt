@@ -1,5 +1,7 @@
 package com.example.taskmanager.mainui
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -29,6 +32,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -51,7 +55,9 @@ import com.example.taskmanager.ui.theme.TaskManagerTheme
 import com.example.taskmanager.viewmodel.ScreenModeViewModel
 import com.example.taskmanager.viewmodel.TaskViewModel
 import kotlinx.coroutines.launch
+import java.util.Date
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(modifier: Modifier=Modifier.fillMaxSize()){
 
@@ -120,6 +126,7 @@ fun TopBar(viewModel: ScreenModeViewModel, toggleState: Boolean){
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel, modifier: Modifier = Modifier){
@@ -130,9 +137,10 @@ fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel, modifier: Modif
     val coroutineScope = rememberCoroutineScope()
     var showTime = remember{ mutableStateOf(false)}
     var showDate = remember{ mutableStateOf(false)}
+    var timeInMillis = remember{ mutableLongStateOf(Date().time) }
 
     Dialog(onDismissRequest = onDismiss,
-        properties = DialogProperties(dismissOnClickOutside = false)
+        properties = DialogProperties(dismissOnClickOutside = false),
     ) {
         Surface(
             shape = MaterialTheme.shapes.large,
@@ -143,16 +151,21 @@ fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel, modifier: Modif
                     onValueChange = {task = it},
                     label = { Text("Add Task")
                     },
-                    modifier = Modifier.padding(10.dp),
+                    modifier = Modifier.padding(10.dp).fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
                     colors = TextFieldDefaults.textFieldColors(
                         focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
+                        unfocusedIndicatorColor = Color.Transparent,
+                        containerColor = Color.Cyan
                     )
                 )
                 ElevatedButton(onClick = {
                     showDate.value = true
                 },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.DarkGray,
+                    contentColor = Color.Cyan
+                ),
                 modifier = Modifier.padding(10.dp).wrapContentSize()
                 ) {
                     Text("Set Date")
@@ -160,27 +173,16 @@ fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel, modifier: Modif
                 ElevatedButton(onClick = {
                     showTime.value = true
                 },
-                    modifier = Modifier.padding(10.dp).wrapContentSize()
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.DarkGray,
+                        contentColor = Color.Cyan
+                    ),
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .wrapContentSize()
                 ) {
                     Text("Set Time")
                 }
-                /*
-                TextField(value = reminderDate.value,
-                    onValueChange = {reminderDate.value = it},
-                    label = { Text("Set Reminder Date")
-                        Modifier.padding(8.dp)
-                    },
-                    modifier = Modifier.padding(10.dp),
-                    shape = RoundedCornerShape(8.dp)
-                )
-                TextField(value = reminderTime.value,
-                    onValueChange = {reminderTime.value = it},
-                    label = { Text("Set Reminder Time")
-                        Modifier.padding(8.dp)
-                    },
-                    modifier = Modifier.padding(10.dp),
-                    shape = RoundedCornerShape(8.dp)
-                )*/
                 Box(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -194,10 +196,11 @@ fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel, modifier: Modif
                     }
                     TextButton(
                         onClick = {
-                            val item = Item(0, task, reminderDate.value, reminderTime.value)
+                            val item = Item(0, task, reminderDate.value, reminderTime.value, timeInMillis.value)
                             coroutineScope.launch {
-                                viewModel.insertItem(item)
+                                val id = viewModel.insertItem(item)
                             }
+                            // viewmodel for alarm manager
                             //reminderViewModel.updateReminder(reminderDate.value, reminderTime.value)
                             onDismiss()
                         },
@@ -212,10 +215,6 @@ fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel, modifier: Modif
             }
         }
     }
-    if(showDate.value){
-        SetDate(reminderDate=reminderDate, showDate=showDate)}
-
-    if(showTime.value)
-        SetTime(reminderTime=reminderTime, showTime=showTime)
+        SetDateTime(reminderDate=reminderDate, showDate=showDate, reminderTime=reminderTime, showTime=showTime, timeInMillis=timeInMillis)
 }
 

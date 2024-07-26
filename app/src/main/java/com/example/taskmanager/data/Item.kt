@@ -9,5 +9,6 @@ data class Item(
     val id : Int = 0,
     var task : String,
     var reminderDate : String,
-    var reminderTime : String
+    var reminderTime : String,
+    var timeMillis: Long
 )
