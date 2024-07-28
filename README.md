@@ -5,7 +5,7 @@ Tools and Technologies used:
 Kotlin Jetpack Compose, Android Studio.
 
 Library used:
-ViewModel, ROOM DB, Coroutine, Alarm Manager, Notification Manager.
+ViewModel, ROOM DB, Coroutine, Alarm Manager, Notification Manager, DataStore<Preferences>.
 
 Architecture: MVVM
 
