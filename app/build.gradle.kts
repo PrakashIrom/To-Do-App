@@ -4,8 +4,6 @@ plugins {
     id("com.google.devtools.ksp") version "1.9.20-1.0.14"
 }
 
-
-
 android {
     namespace = "com.example.taskmanager"
     compileSdk = 34
@@ -76,6 +74,12 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    //koin
+    implementation(platform("io.insert-koin:koin-bom:4.0.0"))
+    implementation("io.insert-koin:koin-compose-viewmodel")
+    implementation("io.insert-koin:koin-core")
+    implementation("io.insert-koin:koin-android")
 
     //ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.3")

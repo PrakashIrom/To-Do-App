@@ -12,38 +12,26 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.taskmanager.R
 
-@SuppressLint("ScheduleExactAlarm")
-fun scheduleTaskReminder(context: Context, taskId: Int, reminderTime: Long) {
-    val intent = Intent(context, TaskReminderReceiver::class.java).apply {
-        putExtra("TASK_ID", taskId)
-    }
-
-    val pendingIntent = PendingIntent.getBroadcast(
-        context,
-        taskId,
-        intent,
-        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-    )
-
-    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-    alarmManager.setExact(
-        AlarmManager.RTC_WAKEUP,
-        reminderTime,
-        pendingIntent
-    )
-}
-
-class TaskReminderReceiver: BroadcastReceiver() {
+class TaskReminderReceiver : BroadcastReceiver() {
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onReceive(context: Context?, intent: Intent?) {
-            val taskId = intent?.getLongExtra("TASK_ID",-1)
+        Log.d("TaskReminderReceiver", "onReceive called")
+        val taskId = intent?.getLongExtra("TASK_ID", -1) ?: -1
+
+        Log.d("TaskReminderReceiver", "Task ID: $taskId")
+
+        if (taskId == -1L) {
+            Log.e("TaskReminderReceiver", "Invalid Task ID")
+            return
+        }
 
         val notificationManager = NotificationManagerCompat.from(context!!)
         createNotificationChannel(notificationManager, context)
@@ -53,9 +41,8 @@ class TaskReminderReceiver: BroadcastReceiver() {
             .setContentTitle("Task Reminder")
             .setContentText("You have a task to complete!")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setAutoCancel(true)
+            .setOngoing(true)
             .build()
-
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.POST_NOTIFICATIONS
@@ -69,7 +56,7 @@ class TaskReminderReceiver: BroadcastReceiver() {
             )
             return
         }
-        notificationManager.notify(taskId!!.toInt(), notification)
+        notificationManager.notify(taskId.toInt(), notification)
     }
 
     private fun createNotificationChannel(manager: NotificationManagerCompat, context: Context) {
@@ -81,7 +68,31 @@ class TaskReminderReceiver: BroadcastReceiver() {
             ).apply {
                 description = "Channel for task reminders"
             }
-            manager.createNotificationChannel(channel)
+            val notificationManager = context.getSystemService(NotificationManager::class.java)
+            notificationManager.createNotificationChannel(channel)
         }
+    }
+
+    @SuppressLint("ScheduleExactAlarm")
+    fun scheduleTaskReminder(context: Context, taskId: Int, reminderTime: Long) {
+        val intent = Intent(context, TaskReminderReceiver::class.java).apply {
+            action = "com.example.taskmanager.ACTION_RECEIVE_REMINDER"
+            putExtra("TASK_ID", taskId)
+        }
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            taskId,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.setExact(
+            AlarmManager.RTC_WAKEUP,
+            reminderTime,
+            pendingIntent
+        )
+        Log.d("TaskReminderReceiver", "Alarm set for taskId: $taskId at time: $reminderTime")
     }
 }

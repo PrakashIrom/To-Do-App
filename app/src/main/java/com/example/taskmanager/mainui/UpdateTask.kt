@@ -10,6 +10,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,6 +20,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -47,7 +50,15 @@ fun UpdateTask(viewModel: TaskViewModel, item: Item, onDismiss: () -> Unit){
                     label = { Text("Edit Task")
                     },
                     modifier = Modifier.padding(10.dp),
-                    shape = RoundedCornerShape(8.dp)
+                    shape = RoundedCornerShape(8.dp),
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        focusedLabelColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.primaryContainer),
+                        unfocusedLabelColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.primaryContainer)
+                    )
                 )
 
                 TextField(value = reminderDate,
@@ -56,7 +67,15 @@ fun UpdateTask(viewModel: TaskViewModel, item: Item, onDismiss: () -> Unit){
                         Modifier.padding(8.dp)
                     },
                     modifier = Modifier.padding(10.dp),
-                    shape = RoundedCornerShape(8.dp)
+                    shape = RoundedCornerShape(8.dp),
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        focusedLabelColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.primaryContainer),
+                        unfocusedLabelColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.primaryContainer)
+                    )
                 )
 
                 TextField(value = reminderTime,
@@ -64,6 +83,14 @@ fun UpdateTask(viewModel: TaskViewModel, item: Item, onDismiss: () -> Unit){
                     label = { Text("Edit Reminder Time")
                         Modifier.padding(8.dp)
                     },
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        focusedLabelColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.primaryContainer),
+                        unfocusedLabelColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.primaryContainer)
+                    ),
                     modifier = Modifier.padding(10.dp),
                     shape = RoundedCornerShape(8.dp)
                 )

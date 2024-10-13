@@ -1,5 +1,7 @@
 package com.example.taskmanager.mainui
 
+import android.view.Gravity
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +28,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -53,9 +56,9 @@ fun Task(items: List<Item>, modifier: Modifier, viewModel: TaskViewModel){
 @Composable
 fun TaskCard(item: Item, viewModel: TaskViewModel){
 
-   // val reminderViewModel: ReminderViewModel = viewModel(factory = ReminderViewModel.Factory)
     val coroutineScope = rememberCoroutineScope()
     var showDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Card(modifier = Modifier
         .fillMaxSize()
@@ -96,6 +99,12 @@ fun TaskCard(item: Item, viewModel: TaskViewModel){
                     modifier = Modifier
                         .padding(4.dp)
                         .clickable {
+                           val toast =  Toast.makeText(context, "Task Completed", Toast.LENGTH_LONG)
+                            toast.setGravity(Gravity.CENTER, 0, 0)
+                            toast.show()
+                            coroutineScope.launch {
+                                viewModel.deleteItem(item)
+                            }
                         }
                 )
                 Icon(

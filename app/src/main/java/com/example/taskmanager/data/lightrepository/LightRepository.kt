@@ -7,7 +7,6 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-
 class LightRepository(private val datastore: DataStore<Preferences>) {
 
     companion object{
@@ -25,4 +24,5 @@ class LightRepository(private val datastore: DataStore<Preferences>) {
             preferences[USER_SCREEN_MODE] = mode
         }
     }
+
 }

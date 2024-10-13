@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "Tasks")
 data class Item(
     @PrimaryKey(autoGenerate = true)
-    val id : Int = 0,
+    val id : Long = 0,
     var task : String,
     var reminderDate : String,
     var reminderTime : String,

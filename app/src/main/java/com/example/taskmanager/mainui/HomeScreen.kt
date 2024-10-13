@@ -1,6 +1,6 @@
 package com.example.taskmanager.mainui
 
-import alarmmanager.scheduleTaskReminder
+import alarmmanager.TaskReminderReceiver
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
@@ -19,7 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -53,7 +53,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.taskmanager.R
 import com.example.taskmanager.data.Item
 import com.example.taskmanager.ui.theme.TaskManagerTheme
-//import com.example.taskmanager.viewmodel.ReminderViewModel
 import com.example.taskmanager.viewmodel.ScreenModeViewModel
 import com.example.taskmanager.viewmodel.TaskViewModel
 import kotlinx.coroutines.launch
@@ -72,7 +71,9 @@ fun HomeScreen(modifier: Modifier=Modifier.fillMaxSize()){
 
     TaskManagerTheme(darkTheme=toggleState){
         Scaffold(
-            topBar = {TopBar(screenViewModel, toggleState)},
+            topBar = {
+                TopBar(screenViewModel, toggleState)
+                     },
             floatingActionButton = {
                 FloatingActionButton(onClick = {
                     showDialog=true
@@ -126,7 +127,6 @@ fun TopBar(viewModel: ScreenModeViewModel, toggleState: Boolean){
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel, modifier: Modifier = Modifier){
 
@@ -138,7 +138,7 @@ fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel, modifier: Modif
     val showTime = remember{ mutableStateOf(false)}
     val showDate = remember{ mutableStateOf(false)}
     val timeInMillis = remember{ mutableLongStateOf(Date().time) }
-    var setTimer by remember{mutableLongStateOf(0L)}
+    var getTimer by remember{mutableLongStateOf(0L)}
 
     Dialog(onDismissRequest = onDismiss,
         properties = DialogProperties(dismissOnClickOutside = false),
@@ -154,18 +154,21 @@ fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel, modifier: Modif
                     },
                     modifier = Modifier.padding(10.dp).fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
-                    colors = TextFieldDefaults.textFieldColors(
+                    colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        containerColor = Color.White
+                        unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        focusedLabelColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.primaryContainer),
+                        unfocusedLabelColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.primaryContainer)
+                        ),
                     )
-                )
                 ElevatedButton(onClick = {
                     showDate.value = true
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = Color.Black
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.primaryContainer)
                 ),
                 modifier = Modifier.padding(10.dp).wrapContentSize()
                 ) {
@@ -175,8 +178,8 @@ fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel, modifier: Modif
                     showTime.value = true
                 },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
-                        contentColor = Color.Black
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.primaryContainer)
                     ),
                     modifier = Modifier
                         .padding(10.dp)
@@ -197,11 +200,12 @@ fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel, modifier: Modif
                     }
                     TextButton(
                         onClick = {
-                            val item = Item(0, task, reminderDate.value, reminderTime.value, timeInMillis.value)
+                            val item = Item(0,task, reminderDate.value, reminderTime.value, timeInMillis.longValue)
                             coroutineScope.launch {
                                 val id = viewModel.insertItem(item)
-                               setTimer = viewModel.getReminder(id)
-                                scheduleTaskReminder(context, id.toInt(), setTimer)
+                               getTimer = viewModel.getReminder(id)
+                                val tr: TaskReminderReceiver = TaskReminderReceiver()
+                                tr.scheduleTaskReminder(context, id.toInt(), getTimer)
                             }
                             onDismiss()
                         },

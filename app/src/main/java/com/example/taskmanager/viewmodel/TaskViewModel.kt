@@ -14,9 +14,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class TaskViewModel(private val repository: ItemsRepository): ViewModel() {
-    //The repository parameter of the TaskViewModel is declared as private
-    // val repository. If you do not set it as private val repository,
-    // it will only be a constructor parameter and won't be accessible inside the class methods.
 
     private val _items = MutableStateFlow<List<Item>>(emptyList())
     val items: StateFlow<List<Item>> = _items

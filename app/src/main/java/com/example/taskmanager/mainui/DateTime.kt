@@ -26,7 +26,7 @@ import java.util.Date
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SetDateTime(reminderDate: MutableState<String>, showDate:MutableState<Boolean>, reminderTime: MutableState<String>, showTime: MutableState<Boolean>, timeInMillis: MutableState<Long>){
+fun SetDateTime(reminderDate: MutableState<String>, showDate: MutableState<Boolean>, reminderTime: MutableState<String>, showTime: MutableState<Boolean>, timeInMillis: MutableState<Long>) {
 
     val dateState = rememberDatePickerState(Date().time) // Date().time will show the current date
     val currentTime = Calendar.getInstance()
@@ -36,41 +36,49 @@ fun SetDateTime(reminderDate: MutableState<String>, showDate:MutableState<Boolea
         is24Hour = true,
     )
 
-    if(showDate.value)
+    if (showDate.value) {
         DatePickerDialog(
             onDismissRequest = {
-                showDate.value=false
+                showDate.value = false
             },
             confirmButton = {
                 TextButton(onClick = {
-                    showDate.value=false
+                    showDate.value = false
+                    reminderDate.value = dateState.selectedDateMillis?.let { convert(it) } ?: ""
                 }) {
-                    reminderDate.value = convert(dateState.selectedDateMillis!!)
-                     Text(text="Set Date")
+                    Text("Set Date")
                 }
             },
             dismissButton = {
                 TextButton(onClick = {
                     showDate.value = false
-                })
-                {
+                }) {
                     Text("Cancel")
                 }
             },
             modifier = Modifier.fillMaxSize()
-            )
-        {
-         DatePicker(state = dateState)
+        ) {
+            DatePicker(state = dateState)
         }
+    }
 
-    if(showTime.value)
-        TimePickerDialog(onDismiss = { showTime.value=false }, onConfirm = {showTime.value = false}, reminderTime, timePickerState) {
-        TimePicker(state = timePickerState)
+    if (showTime.value) {
+        TimePickerDialog(
+            onDismiss = { showTime.value = false },
+            onConfirm = {
+                showTime.value = false
+                reminderTime.value = "${timePickerState.hour}:${timePickerState.minute}"
+            },
+            reminderTime,
+            timePickerState
+        ) {
+            TimePicker(state = timePickerState)
+        }
     }
     timeInMillis.value = convertDateAndTimeToMilliseconds(dateState, timePickerState)
 }
 
-private fun convert(date:Long):String{
+private fun convert(date: Long): String {
     val dateNew = Date(date) // converts the long to date object
     val formatter = SimpleDateFormat.getDateInstance() //Creates a date formatter that uses the default date and time format for the current locale.
 
@@ -79,11 +87,11 @@ private fun convert(date:Long):String{
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimePickerDialog(onDismiss: () -> Unit, onConfirm: () -> Unit, reminderTime: MutableState<String>, timePickerState: TimePickerState, content: @Composable () -> Unit ) {
+fun TimePickerDialog(onDismiss: () -> Unit, onConfirm: () -> Unit, reminderTime: MutableState<String>, timePickerState: TimePickerState, content: @Composable () -> Unit) {
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        text = {content()},
+        text = { content() },
         dismissButton = {
             TextButton(onClick = {
                 onDismiss()
@@ -99,25 +107,24 @@ fun TimePickerDialog(onDismiss: () -> Unit, onConfirm: () -> Unit, reminderTime:
                 Text("Set Time")
             }
         })
-
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 fun convertDateAndTimeToMilliseconds(dateState: DatePickerState, timePickerState: TimePickerState): Long {
-
     val selectedDateMillis = dateState.selectedDateMillis
     val selectedDate = selectedDateMillis?.let { Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate() }
     val calendar = Calendar.getInstance()
 
-    calendar.set(
-        selectedDate!!.year,
-        selectedDate.monthValue,
-        selectedDate.dayOfMonth,
-        timePickerState.hour,
-        timePickerState.minute
-    )
+    selectedDate?.let {
+        calendar.set(
+            it.year,
+            it.monthValue - 1, // Calendar months are zero-based
+            it.dayOfMonth,
+            timePickerState.hour,
+            timePickerState.minute
+        )
+    }
+
     return calendar.timeInMillis
 }
-
-
