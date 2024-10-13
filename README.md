@@ -14,4 +14,6 @@ Issue: Even after the user has chosen the date and time for giving reminders, th
 
 Screenshots of the App is given below:
 
+![Home Screen](screenshots/screenshot1.png)
+
 
