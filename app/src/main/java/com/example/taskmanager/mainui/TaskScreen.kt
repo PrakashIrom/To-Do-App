@@ -31,9 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.taskmanager.data.Item
-//import com.example.taskmanager.viewmodel.ReminderViewModel
 import com.example.taskmanager.viewmodel.TaskViewModel
 import kotlinx.coroutines.launch
 

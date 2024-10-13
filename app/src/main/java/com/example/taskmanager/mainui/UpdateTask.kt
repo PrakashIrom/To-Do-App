@@ -44,7 +44,6 @@ fun UpdateTask(viewModel: TaskViewModel, item: Item, onDismiss: () -> Unit){
             tonalElevation = 8.dp
         ){
             Column() {
-
                 TextField(value = task,
                     onValueChange = {task = it},
                     label = { Text("Edit Task")
@@ -54,8 +53,8 @@ fun UpdateTask(viewModel: TaskViewModel, item: Item, onDismiss: () -> Unit){
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.inversePrimary,
+                        focusedContainerColor = MaterialTheme.colorScheme.inversePrimary,
                         focusedLabelColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.primaryContainer),
                         unfocusedLabelColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.primaryContainer)
                     )
@@ -71,8 +70,8 @@ fun UpdateTask(viewModel: TaskViewModel, item: Item, onDismiss: () -> Unit){
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.inversePrimary,
+                        focusedContainerColor = MaterialTheme.colorScheme.inversePrimary,
                         focusedLabelColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.primaryContainer),
                         unfocusedLabelColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.primaryContainer)
                     )
@@ -86,8 +85,8 @@ fun UpdateTask(viewModel: TaskViewModel, item: Item, onDismiss: () -> Unit){
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.inversePrimary,
+                        focusedContainerColor = MaterialTheme.colorScheme.inversePrimary,
                         focusedLabelColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.primaryContainer),
                         unfocusedLabelColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.primaryContainer)
                     ),

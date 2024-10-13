@@ -56,13 +56,13 @@ import com.example.taskmanager.ui.theme.TaskManagerTheme
 import com.example.taskmanager.viewmodel.ScreenModeViewModel
 import com.example.taskmanager.viewmodel.TaskViewModel
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 import java.util.Date
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HomeScreen(modifier: Modifier=Modifier.fillMaxSize()){
+fun HomeScreen(modifier: Modifier=Modifier.fillMaxSize(), viewModel: TaskViewModel = koinViewModel()){
 
-    val viewModel: TaskViewModel = viewModel(factory = TaskViewModel.Factory)
     val screenViewModel: ScreenModeViewModel = viewModel(factory = ScreenModeViewModel.Factory)
     val itemState = viewModel.items.collectAsState()
     val itemList = itemState.value
@@ -88,7 +88,7 @@ fun HomeScreen(modifier: Modifier=Modifier.fillMaxSize()){
         }
 
         if(showDialog){
-            AddTaskDialog(onDismiss = {showDialog=false},viewModel,modifier)
+            AddTaskDialog(onDismiss = {showDialog=false}, viewModel)
         }
     }
 }
@@ -128,7 +128,7 @@ fun TopBar(viewModel: ScreenModeViewModel, toggleState: Boolean){
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel, modifier: Modifier = Modifier){
+fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel){
 
     val context = LocalContext.current
     var task by remember{ mutableStateOf("")}
@@ -145,7 +145,8 @@ fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel, modifier: Modif
     ) {
         Surface(
             shape = MaterialTheme.shapes.large,
-            tonalElevation = 8.dp
+            tonalElevation = 8.dp,
+            color = MaterialTheme.colorScheme.surfaceVariant
         ) {
             Column() {
                 TextField(value = task,
@@ -157,17 +158,17 @@ fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel, modifier: Modif
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        focusedLabelColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.primaryContainer),
-                        unfocusedLabelColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.primaryContainer)
+                        unfocusedContainerColor = MaterialTheme.colorScheme.inversePrimary,
+                        focusedContainerColor = MaterialTheme.colorScheme.inversePrimary,
+                        focusedLabelColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.inverseOnSurface),
+                        unfocusedLabelColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.inverseOnSurface)
                         ),
                     )
                 ElevatedButton(onClick = {
                     showDate.value = true
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    containerColor = MaterialTheme.colorScheme.onSecondary,
                     contentColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.primaryContainer)
                 ),
                 modifier = Modifier.padding(10.dp).wrapContentSize()
@@ -178,7 +179,7 @@ fun AddTaskDialog(onDismiss: ()->Unit, viewModel: TaskViewModel, modifier: Modif
                     showTime.value = true
                 },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        containerColor = MaterialTheme.colorScheme.onSecondary,
                         contentColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.primaryContainer)
                     ),
                     modifier = Modifier
